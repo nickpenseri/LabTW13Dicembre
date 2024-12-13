@@ -50,3 +50,51 @@ function generaArticoli(articoli){
     return result;
 }
 
+async function getData(){
+    const url = "api-login.php";
+    try {
+        const response = await fetch(url);
+        if(!response.ok){
+            throw new Error("Response status: " + response.status);
+        }
+        const json = await response.json();
+        const main = document.querySelector("main");
+        if(json["logineseguito"]){
+            main.innerHTML = generaArticoli(json["articoliautore"]);
+        } else {
+            main.innerHTML = generaLoginForm();
+            document
+                .querySelector('main form li input[type="submit"]')
+                .addEventListener("click", async function(e){
+                    e.preventDefault();
+                    const username = document.querySelector("#username").value;
+                    console.log("username: " + username);
+                    const password = document.querySelector("#password").value;
+                    const formData = new FormData();
+                    formData.append('username', username);
+                    formData.append('password', password);
+                    console.log(formData);
+                    const responsePost = await fetch(url, {
+                        method: "POST",
+                        body: formData
+                    });
+                    if(!responsePost.ok){
+                        throw new Error("Response status: " + responsePost.status);
+                    }
+                    const json2 = await responsePost.json();
+                    if(json2["logineseguito"]){
+                        main.innerHTML = generaArticoli(json2["articoliautore"]);
+                    } else {
+                        document.querySelector("form p").innerHTML = json2["errore-login"];
+                    }
+
+            });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+
+}
+
+
+window.onload = getData;
