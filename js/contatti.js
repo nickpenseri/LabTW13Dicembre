@@ -29,3 +29,23 @@ function generaTabella(autori){
     return table;
 }
 
+async function getAuthorsData() {
+    const url = "api-contatti.php";
+    try {
+        const response = await fetch(url);
+        if(!response.ok){
+            throw new Error("Response status: " + response.status);
+        }
+        const json = await response.json();
+        console.log(json);
+        const tabella = generaTabella(json);
+        const main = document.querySelector("main");
+        main.innerHTML = tabella;
+    } catch (error) {
+        console.error(error);
+    }
+    
+}
+
+getAuthorsData();
+
