@@ -23,3 +23,25 @@ function generaArticoli(articoli){
     }
     return result;
 }
+
+
+
+async function getArticleData(){
+    const url = "api-articolo.php";
+
+    try {
+        const response = await fetch(url);
+        if(!response.ok){
+            throw new Error("Response status: " + response.status);
+        }
+        const json = await response.json();
+        console.log(json);
+        const articoli = generaArticoli(json);
+        const main = document.querySelector("main");
+        main.innerHTML = articoli;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+getArticleData();
